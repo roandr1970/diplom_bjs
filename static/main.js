@@ -1,81 +1,134 @@
 class Profile {
-    constructor(username,firstName,lastName,password){
+    constructor(username,name,firstName, lastName,password){
         this.username = username,
+        this.name = name,
         this.firstName = firstName, 
-        this.lastName = lastName ,
+        this.lastName = lastName,
         this.password = password
     };
 
-    addUser(users) {
-        let userNew = users.find(user => user.username === this.username);
-        if (userNew != undefined) {
-          console.log ('Такой пользователь уже существует');
-        } else {
-          users.push({username: this.username, firstName: this.firstName, lastName: this.lastName, password: this.password});
-          console.log(`Пользователь ${this.username} успешно добавлен`);
-          console.log (users);
-        }
+    createUser( {username,  name: {firstName, lastName}, password}, callback )  {
+        return ApiConnector.createUser({username, name: {firstName, lastName}, password},(err, data) => {
+            console.log(`Creating user ${this.username}`);
+            callback(err, data);
+        });
     }
 
-    authorization(name,pass) {
-        (this.username == name && this.password == pass) ? console.log(`${this.firstName}, Вы успешно авторизованы` ) : console.log(`Неверные логин или пароль`);
+    performLogin({ username, password }, callback) {
+        return ApiConnector.performLogin({ username, password }, (err, data) => {
+            console.log(`Autorizing user ${this.username}`);
+            callback(err, data);
+       });
     }
+
 
     addMoney({ currency, amount }, callback) {
         return ApiConnector.addMoney({ currency, amount }, (err, data) => {
-            console.log(`Сумма ${amount} в валюте ${currency} добавлена пользователю ${this.username}`);
+            console.log(`Adding ${amount} of ${currency} to ${this.username}`);
+            callback(err, data);
+        });
+    }
+
+    transferMoney({ to, amount }, callback) {
+        return ApiConnector.transferMoney({ to, amount }, (err, data) => {
+            console.log(`Transfering ${amount} of Netcoins to ${to}`);
+            callback(err, data);
+        });
+    }
+
+    convertMoney({ fromCurrency, targetCurrency, targetAmount }, callback) {
+        return ApiConnector.transferMoney({ fromCurrency, targetCurrency, targetAmount }, (err, data) => {
+            console.log(`Converting ${fromCurrency} to ${targetAmount} ${targetCurrency}`);
             callback(err, data);
         });
     }
 };
 
-function getNewValue() {
-    
-    const netcoinToStandardCurrency = Math.floor(Math.random() * 10 + 1);
-
-    return console.log({
-        NETCOIN_RUB: (netcoinToStandardCurrency * 100).toFixed(3),
-        NETCOIN_USD: ((netcoinToStandardCurrency * 100) / 66).toFixed(3),
-        NETCOIN_EUR: ((netcoinToStandardCurrency * 100) / 72).toFixed(3),
-        RUB_NETCOIN: (1 / (netcoinToStandardCurrency * 100)).toFixed(3),
-        USD_NETCOIN: (1 / ((netcoinToStandardCurrency * 100) / 66)).toFixed(3),
-        EUR_NETCOIN: (1 / ((netcoinToStandardCurrency * 100) / 72)).toFixed(3),
-        
+function getStocks(callback) {
+    return ApiConnector.getStocks((err, data) => {
+        callback(err, data);
     });
-};
-
-let usersList = [];
-
-const Ivan = new Profile ('ivan','Ivan','Chernyshev','ivanspass');
-Ivan.addUser(usersList);
-
-Ivan.authorization('ivan','ivanspass');
-
-Ivan.addMoney({ currency: 'RUB', amount: 100 }, (err, data) => {
-        if (err) {
-            console.error('Error during adding money to Ivan');
-        } 
-});
+}
 
 
-setInterval (getNewValue,1000);
+//setInterval (getStocks,1000);
 
-/*
+
 function main() {
-    const Ivan = new Profile({
-        username :'ivan',
-        name : { firstName : 'Ivan', lastName : 'Chernyshev' },
-        password : 'ivanspass',
-    });
-    // сначала создаем и авторизуем пользователя
 
-    // после того, как мы авторизовали пользователя, добавляем ему денег в кошелек
-    Ivan.addMoney({ currency: 'RUB', amount: 100 }, (err, data) => {
+    const Ivan = new Profile({
+                    username: 'ivan',
+                    name: {firstName: 'Ivan', 
+                    lastName: 'Chernyshev'},
+                    password: 'ivanspass',
+                });
+
+    const Andrey = new Profile({
+                    username: 'andrey',
+                    name: {firstName: 'Andrey', 
+                    lastName: 'Rodionov'},
+                    password: 'andreyspass',
+                });
+
+    Ivan.createUser({
+                    username: 'ivan',
+                    name: {firstName: 'Ivan', 
+                    lastName: 'Chernyshev'},
+                    password: 'ivanspass',
+                    }, (err,data) => {
+                        if (err) {
+                            console.error('Error creating user ivan');
+                            } else {
+                                console.log(`ivan is created`);
+                            }
+                    });
+
+    Ivan.performLogin({ username: 'ivan', password: 'ivanspass'}, (err,data) => {
+            if (err) {
+                console.error('User authorization failed ivan');
+                } else {
+                    console.log(`Ivan is authorizing`);
+                }
+    });
+
+   
+    Ivan.addMoney({ currency: 'RUB', amount: 100000 }, (err, data) => {
         if (err) {
             console.error('Error during adding money to Ivan');
-        } 
+            } else {
+                console.log(`Added ${amount} ${currency} to Ivan`);
+            }
+    });
+
+    Andrey.createUser({
+        username: 'andrey',
+        name: {firstName: 'Andrey', 
+        lastName: 'Rodionov'},
+        password: 'andreyspass',
+        }, (err,data) => {
+            if (err) {
+                console.error('Error creating user andrey');
+                } else {
+                    console.log(`andrey is created`);
+                }
+        });
+
+    Andrey.performLogin({ username: 'andrey', password: 'andreyspass'}, (err,data) => {
+            if (err) {
+                console.error('User authorization failed andrey');
+                } else {
+                    console.log(`Andrey is authorizing`);
+                }
+    });
+
+    Ivan.convertMoney({ fromCurrency: 'RUB', targetCurrency: 'NETCOIN', targetAmount: 100000 }, (err,data) => {
+        if (err) {
+            console.error('Conversion is not made');
+            } else {
+                console.log(`Converted to coins ${Ivan}`);
+            }
     });
 }
 
 main();
-*/
+

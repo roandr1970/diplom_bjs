@@ -1,26 +1,37 @@
 class Profile {
-    constructor(username,name,firstName, lastName,password){
+    constructor(username, name, firstName, lastName,password){
         this.username = username,
-        this.name = name,
-        this.firstName = firstName, 
-        this.lastName = lastName,
+        this.name = {firstName, lastName},
         this.password = password
     };
 
-    createUser( {username,  name: {firstName, lastName}, password}, callback )  {
-        return ApiConnector.createUser({username, name: {firstName, lastName}, password},(err, data) => {
-            console.log(`Creating user ${this.username}`);
-            callback(err, data);
-        });
-    }
 
-    performLogin({ username, password }, callback) {
-        return ApiConnector.performLogin({ username, password }, (err, data) => {
-            console.log(`Autorizing user ${this.username}`);
-            callback(err, data);
-       });
-    }
+    createUser(callback) {
+        return ApiConnector.createUser(
+                {
+                username: this.username,
+                name: this.name,
+                password: this.password
+                },
+                (err, data) => {
+                        console.log(`Creating user ${this.username}`);
+                        callback(err, data);
+                        }
+                );
+    }            
 
+    performLogin(callback) {
+        return ApiConnector.performLogin(
+            {
+                username: this.username,
+                password: this.password
+            },
+            (err, data) => {
+                console.log(`Autorizing user ${this.username}`);
+                callback(err, data);
+                }
+        );
+    }
 
     addMoney({ currency, amount }, callback) {
         return ApiConnector.addMoney({ currency, amount }, (err, data) => {
@@ -38,10 +49,11 @@ class Profile {
 
     convertMoney({ fromCurrency, targetCurrency, targetAmount }, callback) {
         return ApiConnector.transferMoney({ fromCurrency, targetCurrency, targetAmount }, (err, data) => {
-            console.log(`Converting ${fromCurrency} to ${targetAmount} ${targetCurrency}`);
+            console.log(`Converting ${targetAmount} ${fromCurrency} to ${targetCurrency} `);
             callback(err, data);
         });
     }
+
 };
 
 function getStocks(callback) {
@@ -49,10 +61,6 @@ function getStocks(callback) {
         callback(err, data);
     });
 }
-
-
-//setInterval (getStocks,1000);
-
 
 function main() {
 
@@ -64,26 +72,21 @@ function main() {
                 });
 
     const Andrey = new Profile({
-                    username: 'andrey',
-                    name: {firstName: 'Andrey', 
-                    lastName: 'Rodionov'},
-                    password: 'andreyspass',
+                    username: 'petr',
+                    name: {firstName: 'Petr', 
+                    lastName: 'Voronin'},
+                    password: 'petrspass',
                 });
 
-    Ivan.createUser({
-                    username: 'ivan',
-                    name: {firstName: 'Ivan', 
-                    lastName: 'Chernyshev'},
-                    password: 'ivanspass',
-                    }, (err,data) => {
-                        if (err) {
-                            console.error('Error creating user ivan');
-                            } else {
-                                console.log(`ivan is created`);
-                            }
-                    });
+    Ivan.createUser((err,data) => {
+        if (err) {
+            console.error('Error creating user ivan');
+        } else {
+                console.log(`Ivan is created`);
+        }
+    }) ;
 
-    Ivan.performLogin({ username: 'ivan', password: 'ivanspass'}, (err,data) => {
+    Ivan.performLogin((err,data) => {
             if (err) {
                 console.error('User authorization failed ivan');
                 } else {
@@ -99,8 +102,8 @@ function main() {
                 console.log(`Added ${amount} ${currency} to Ivan`);
             }
     });
-
-    Andrey.createUser({
+/*
+    Petr.createUser({
         username: 'andrey',
         name: {firstName: 'Andrey', 
         lastName: 'Rodionov'},
@@ -113,14 +116,14 @@ function main() {
                 }
         });
 
-    Andrey.performLogin({ username: 'andrey', password: 'andreyspass'}, (err,data) => {
+    Petr.performLogin({ username: 'andrey', password: 'andreyspass'}, (err,data) => {
             if (err) {
                 console.error('User authorization failed andrey');
                 } else {
                     console.log(`Andrey is authorizing`);
                 }
     });
-
+*/
     Ivan.convertMoney({ fromCurrency: 'RUB', targetCurrency: 'NETCOIN', targetAmount: 100000 }, (err,data) => {
         if (err) {
             console.error('Conversion is not made');
@@ -128,7 +131,7 @@ function main() {
                 console.log(`Converted to coins ${Ivan}`);
             }
     });
+
 }
 
 main();
-

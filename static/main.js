@@ -62,8 +62,6 @@ function getStocks(callback) {
     });
 }
 
-console.log(getStocks(callback));
-
 function main() {
 
     const Ivan = new Profile({
@@ -95,13 +93,6 @@ function main() {
         }
     }) ;
 /*
-    Ivan.performLogin((err,data) => {
-            if (err) {
-                console.error('User authorization failed ivan');
-                } else {
-                    console.log(`Ivan is authorizing`);
-                }
-    });
 
    
     Ivan.addMoney({ currency: 'RUB', amount: 100000 }, (err, data) => {

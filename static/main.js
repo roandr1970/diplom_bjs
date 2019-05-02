@@ -1,5 +1,5 @@
 class Profile {
-    constructor(username, name, firstName, lastName,password){
+    constructor( {username, name, firstName, lastName,password}){
         this.username = username,
         this.name = {firstName, lastName},
         this.password = password
@@ -62,6 +62,8 @@ function getStocks(callback) {
     });
 }
 
+console.log(getStocks(callback));
+
 function main() {
 
     const Ivan = new Profile({
@@ -71,7 +73,7 @@ function main() {
                     password: 'ivanspass',
                 });
 
-    const Andrey = new Profile({
+    const Petr = new Profile({
                     username: 'petr',
                     name: {firstName: 'Petr', 
                     lastName: 'Voronin'},
@@ -83,9 +85,16 @@ function main() {
             console.error('Error creating user ivan');
         } else {
                 console.log(`Ivan is created`);
+                Ivan.performLogin((err,data) => {
+                    if (err) {
+                        console.error('User authorization failed ivan');
+                        } else {
+                            console.log(`Ivan is authorizing`);
+                        }
+                });
         }
     }) ;
-
+/*
     Ivan.performLogin((err,data) => {
             if (err) {
                 console.error('User authorization failed ivan');
@@ -123,7 +132,7 @@ function main() {
                     console.log(`Andrey is authorizing`);
                 }
     });
-*/
+
     Ivan.convertMoney({ fromCurrency: 'RUB', targetCurrency: 'NETCOIN', targetAmount: 100000 }, (err,data) => {
         if (err) {
             console.error('Conversion is not made');
@@ -131,7 +140,7 @@ function main() {
                 console.log(`Converted to coins ${Ivan}`);
             }
     });
-
+*/
 }
 
 main();

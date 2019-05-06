@@ -1,5 +1,5 @@
 class Profile {
-    constructor( {username, name, firstName, lastName,password}){
+    constructor( {username, name:{firstName, lastName},password}){
         this.username = username,
         this.name = {firstName, lastName},
         this.password = password
@@ -58,23 +58,32 @@ class Profile {
 
 function getStocks(callback) {
     return ApiConnector.getStocks((err, data) => {
-        callback(err, data);
+        console.log(`Getting stocks info`);
+        callback(err, data[0]);
     });
 }
+
+getStocks((err, data) => {
+    if (err) {
+        console.error('Error during getting stocks info');
+    } else {
+        const stocksInfo = data;
+        console.log(stocksInfo);
+      //  console.log(`Loading actual stocks info...\n${stocksInfo}`);
+    }
+});
 
 function main() {
 
     const Ivan = new Profile({
                     username: 'ivan',
-                    name: {firstName: 'Ivan', 
-                    lastName: 'Chernyshev'},
+                    name: {firstName: 'Ivan', lastName: 'Chernyshev'},
                     password: 'ivanspass',
                 });
 
     const Petr = new Profile({
                     username: 'petr',
-                    name: {firstName: 'Petr', 
-                    lastName: 'Voronin'},
+                    name: {firstName: 'Petr', lastName: 'Voronin'},
                     password: 'petrspass',
                 });
 
@@ -82,56 +91,45 @@ function main() {
         if (err) {
             console.error('Error creating user ivan');
         } else {
-                console.log(`Ivan is created`);
+                console.log(`ivan is created`);
                 Ivan.performLogin((err,data) => {
                     if (err) {
                         console.error('User authorization failed ivan');
                         } else {
-                            console.log(`Ivan is authorizing`);
+                            console.log(`ivan is authorizing`);
+                            Ivan.addMoney({ currency: 'RUB', amount: 500000 }, (err, data) => {
+                                if (err) {
+                                    console.error('Error during adding money to ivan');
+                                    } else {
+                                        console.log(`Added ${amount} ${currency} to ivan`);
+                                        Ivan.convertMoney({ fromCurrency: 'RUB', targetCurrency: 'NETCOIN' , targetAmount: 500000 * Number(stocksInfo.RUB_NETCOIN) }, (err,data) => {
+                                            if (err) {
+                                                console.error('Сonversion error');
+                                            } else {
+                                                console.log(`Converted to coins ${Ivan}`);
+                                                Petr.createUser((err,data) => {
+                                                    if (err) {
+                                                        console.error('Error creating user petr');
+                                                    } else {
+                                                        console.log(`petr is created`);
+                                                        Ivan.transferMoney({ to: 'petr', amount: targetAmount }, (err,data) => {
+                                                            if (err) {
+                                                                console.error('Мoney transfer error');
+                                                            } else {
+                                                                console.log(`Petr has got ${amount} NETCOINS`);
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                            });
                         }
                 });
         }
     }) ;
-/*
 
-   
-    Ivan.addMoney({ currency: 'RUB', amount: 100000 }, (err, data) => {
-        if (err) {
-            console.error('Error during adding money to Ivan');
-            } else {
-                console.log(`Added ${amount} ${currency} to Ivan`);
-            }
-    });
-/*
-    Petr.createUser({
-        username: 'andrey',
-        name: {firstName: 'Andrey', 
-        lastName: 'Rodionov'},
-        password: 'andreyspass',
-        }, (err,data) => {
-            if (err) {
-                console.error('Error creating user andrey');
-                } else {
-                    console.log(`andrey is created`);
-                }
-        });
-
-    Petr.performLogin({ username: 'andrey', password: 'andreyspass'}, (err,data) => {
-            if (err) {
-                console.error('User authorization failed andrey');
-                } else {
-                    console.log(`Andrey is authorizing`);
-                }
-    });
-
-    Ivan.convertMoney({ fromCurrency: 'RUB', targetCurrency: 'NETCOIN', targetAmount: 100000 }, (err,data) => {
-        if (err) {
-            console.error('Conversion is not made');
-            } else {
-                console.log(`Converted to coins ${Ivan}`);
-            }
-    });
-*/
 }
 
 main();

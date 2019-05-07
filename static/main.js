@@ -63,11 +63,13 @@ function getStocks(callback) {
     });
 }
 
+let stocksInfo;
+
 getStocks((err, data) => {
     if (err) {
         console.error('Error during getting stocks info');
     } else {
-        const stocksInfo = data;
+        stocksInfo = data;
         console.log(stocksInfo);
       //  console.log(`Loading actual stocks info...\n${stocksInfo}`);
     }

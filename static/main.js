@@ -49,7 +49,7 @@ class Profile {
 
     convertMoney({ fromCurrency, targetCurrency, targetAmount }, callback) {
         return ApiConnector.transferMoney({ fromCurrency, targetCurrency, targetAmount }, (err, data) => {
-            console.log(`Converting ${targetAmount} ${fromCurrency} to ${targetCurrency} `);
+            console.log(`Converting ${fromCurrency} to ${targetAmount} ${targetCurrency} `);
             callback(err, data);
         });
     }
@@ -70,7 +70,7 @@ getStocks((err, data) => {
         console.error('Error during getting stocks info');
     } else {
         stocksInfo = data;
-        console.log(stocksInfo);
+       // console.log(stocksInfo);
       //  console.log(`Loading actual stocks info...\n${stocksInfo}`);
     }
 });
@@ -103,10 +103,11 @@ function main() {
                                 if (err) {
                                     console.error('Error during adding money to ivan');
                                     } else {
-                                        console.log(`Added ${amount} ${currency} to ivan`);
+                                        console.log(`Added 500000 RUB to ivan`);
                                         Ivan.convertMoney({ fromCurrency: 'RUB', targetCurrency: 'NETCOIN' , targetAmount: 500000 * Number(stocksInfo.RUB_NETCOIN) }, (err,data) => {
                                             if (err) {
                                                 console.error('Сonversion error');
+                                                console.log(err);
                                             } else {
                                                 console.log(`Converted to coins ${Ivan}`);
                                                 Petr.createUser((err,data) => {

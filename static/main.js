@@ -48,7 +48,7 @@ class Profile {
     }
 
     convertMoney({ fromCurrency, targetCurrency, targetAmount }, callback) {
-        return ApiConnector.transferMoney({ fromCurrency, targetCurrency, targetAmount }, (err, data) => {
+        return ApiConnector.convertMoney({ fromCurrency, targetCurrency, targetAmount }, (err, data) => {
             console.log(`Converting ${fromCurrency} to ${targetAmount} ${targetCurrency} `);
             callback(err, data);
         });
@@ -109,17 +109,17 @@ function main() {
                                                 console.error('Сonversion error');
                                                 console.log(err);
                                             } else {
-                                                console.log(`Converted to coins ${Ivan}`);
+                                                console.log(`Converted to coins`);
                                                 Petr.createUser((err,data) => {
                                                     if (err) {
                                                         console.error('Error creating user petr');
                                                     } else {
                                                         console.log(`petr is created`);
-                                                        Ivan.transferMoney({ to: 'petr', amount: targetAmount }, (err,data) => {
+                                                        Ivan.transferMoney({ to: 'petr', amount: 500 }, (err,data) => {
                                                             if (err) {
                                                                 console.error('Мoney transfer error');
                                                             } else {
-                                                                console.log(`Petr has got ${amount} NETCOINS`);
+                                                                console.log(`Petr has got 500 NETCOINS`);
                                                             }
                                                         });
                                                     }
